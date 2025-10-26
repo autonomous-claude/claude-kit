@@ -68,13 +68,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       // Post Tweet
       {
         name: "post_tweet",
-        description: "Post a tweet to Twitter/X",
+        description: "Post a tweet to Twitter/X with optional image or video attachment",
         inputSchema: {
           type: "object",
           properties: {
             tweetContent: {
               type: "string",
               description: "The content of the tweet to post",
+            },
+            imagePath: {
+              type: "string",
+              description: "Optional path to image file to attach (supports .jpg, .png, .gif, .webp)",
+            },
+            videoPath: {
+              type: "string",
+              description: "Optional path to video file to attach (supports .mp4, .mov)",
             },
           },
           required: ["tweetContent"],
