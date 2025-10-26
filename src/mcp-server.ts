@@ -29,6 +29,7 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
+      // Image Generation
       {
         name: "generate_image",
         description: "Generate images using Imagen 4",
@@ -43,6 +44,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["prompt"],
         },
       },
+
+      // Text to Speech
       {
         name: "text_to_speech",
         description: "Convert text to speech using ElevenLabs",
@@ -55,21 +58,103 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             voice_id: {
               type: "string",
-              description: "Optional voice ID",
+              description: "Optional ElevenLabs voice ID",
             },
           },
           required: ["text"],
         },
       },
+
+      // Post Tweet
       {
-        name: "veo31_fast_image_to_video",
-        description: "Animate images using Veo 3.1 Fast",
+        name: "post_tweet",
+        description: "Post a tweet to Twitter/X",
+        inputSchema: {
+          type: "object",
+          properties: {
+            tweetContent: {
+              type: "string",
+              description: "The content of the tweet to post",
+            },
+          },
+          required: ["tweetContent"],
+        },
+      },
+
+      // Veo 3.1 Text-to-Video (High Quality)
+      {
+        name: "veo31_text_to_video",
+        description: "Generate high-quality video from text using Veo 3.1 (takes longer but better quality)",
+        inputSchema: {
+          type: "object",
+          properties: {
+            prompt: {
+              type: "string",
+              description: "Detailed description of the video to generate",
+            },
+            negativePrompt: {
+              type: "string",
+              description: "What to avoid in the video (optional)",
+            },
+            aspectRatio: {
+              type: "string",
+              enum: ["9:16", "16:9"],
+              description: "Video aspect ratio (default: 16:9)",
+            },
+            personGeneration: {
+              type: "string",
+              enum: ["dont_allow", "allow_adult", "allow_all"],
+              description: "Person generation policy (default: dont_allow)",
+            },
+            durationSeconds: {
+              type: "number",
+              description: "Duration in seconds (default: 8)",
+            },
+            enhancePrompt: {
+              type: "boolean",
+              description: "Auto-enhance the prompt (default: true)",
+            },
+          },
+          required: ["prompt"],
+        },
+      },
+
+      // Veo 3.1 Fast Text-to-Video
+      {
+        name: "veo31_fast_text_to_video",
+        description: "Generate video quickly from text using Veo 3.1 Fast (faster iterations, shorter videos)",
+        inputSchema: {
+          type: "object",
+          properties: {
+            prompt: {
+              type: "string",
+              description: "Description of the video to generate",
+            },
+            aspectRatio: {
+              type: "string",
+              enum: ["9:16", "16:9"],
+              description: "Video aspect ratio (default: 16:9)",
+            },
+            personGeneration: {
+              type: "string",
+              enum: ["dont_allow", "allow_adult", "allow_all"],
+              description: "Person generation policy (default: dont_allow)",
+            },
+          },
+          required: ["prompt"],
+        },
+      },
+
+      // Veo 3.1 Image-to-Video
+      {
+        name: "veo31_image_to_video",
+        description: "Animate a static image into video using Veo 3.1",
         inputSchema: {
           type: "object",
           properties: {
             imagePath: {
               type: "string",
-              description: "Path to input image file",
+              description: "Path to the input image file",
             },
             prompt: {
               type: "string",
@@ -78,33 +163,133 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             aspectRatio: {
               type: "string",
               enum: ["9:16", "16:9"],
-              description: "Video aspect ratio",
+              description: "Video aspect ratio (default: 16:9)",
+            },
+            personGeneration: {
+              type: "string",
+              enum: ["dont_allow", "allow_adult", "allow_all"],
+              description: "Person generation policy (default: dont_allow)",
+            },
+            durationSeconds: {
+              type: "number",
+              description: "Duration in seconds (default: 8)",
             },
           },
           required: ["imagePath", "prompt"],
         },
       },
+
+      // Veo 3.1 Fast Image-to-Video
+      {
+        name: "veo31_fast_image_to_video",
+        description: "Quickly animate a static image using Veo 3.1 Fast",
+        inputSchema: {
+          type: "object",
+          properties: {
+            imagePath: {
+              type: "string",
+              description: "Path to the input image file",
+            },
+            prompt: {
+              type: "string",
+              description: "Description of how the image should animate",
+            },
+            aspectRatio: {
+              type: "string",
+              enum: ["9:16", "16:9"],
+              description: "Video aspect ratio (default: 16:9)",
+            },
+            personGeneration: {
+              type: "string",
+              enum: ["dont_allow", "allow_adult", "allow_all"],
+              description: "Person generation policy (default: dont_allow)",
+            },
+          },
+          required: ["imagePath", "prompt"],
+        },
+      },
+
+      // Veo 3.1 Video Extension
       {
         name: "veo31_video_extension",
-        description: "Extend and continue videos using Veo 3.1",
+        description: "Extend and continue an existing video using Veo 3.1",
         inputSchema: {
           type: "object",
           properties: {
             videoUrl: {
               type: "string",
-              description: "Google API URL of the input video",
+              description: "Google API URL of the input video to extend",
             },
             prompt: {
               type: "string",
-              description: "Description of how to extend the video",
+              description: "Description of how to continue/extend the video",
             },
             aspectRatio: {
               type: "string",
               enum: ["9:16", "16:9"],
-              description: "Video aspect ratio",
+              description: "Video aspect ratio (default: 16:9)",
+            },
+            personGeneration: {
+              type: "string",
+              enum: ["dont_allow", "allow_adult", "allow_all"],
+              description: "Person generation policy (default: dont_allow)",
             },
           },
           required: ["videoUrl", "prompt"],
+        },
+      },
+
+      // Veo 3.1 Fast Video Extension
+      {
+        name: "veo31_fast_video_extension",
+        description: "Quickly extend an existing video using Veo 3.1 Fast",
+        inputSchema: {
+          type: "object",
+          properties: {
+            videoUrl: {
+              type: "string",
+              description: "Google API URL of the input video to extend",
+            },
+            prompt: {
+              type: "string",
+              description: "Description of how to continue/extend the video",
+            },
+            aspectRatio: {
+              type: "string",
+              enum: ["9:16", "16:9"],
+              description: "Video aspect ratio (default: 16:9)",
+            },
+            personGeneration: {
+              type: "string",
+              enum: ["dont_allow", "allow_adult", "allow_all"],
+              description: "Person generation policy (default: dont_allow)",
+            },
+          },
+          required: ["videoUrl", "prompt"],
+        },
+      },
+
+      // Complete Video with Voiceover Workflow
+      {
+        name: "video_with_voiceover",
+        description: "Complete workflow: Generate image + voiceover + combine into video (optionally post to X)",
+        inputSchema: {
+          type: "object",
+          properties: {
+            imagePrompt: {
+              type: "string",
+              description: "Description of the image to generate",
+            },
+            ttsScript: {
+              type: "string",
+              description: "Script for the voiceover",
+            },
+            postOnX: {
+              type: "boolean",
+              description: "Whether to post the video on Twitter/X (default: false)",
+            },
+          },
+          required: ["imagePrompt", "ttsScript"],
         },
       },
     ],
@@ -132,15 +317,43 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "generate_image":
         result = await flows.imageGenerationFlow(args.prompt as string);
         break;
+
       case "text_to_speech":
         result = await flows.textToSpeechFlow(args);
         break;
+
+      case "post_tweet":
+        result = await flows.postTweetFlow(args);
+        break;
+
+      case "veo31_text_to_video":
+        result = await flows.veo31TextToVideoFlow(args);
+        break;
+
+      case "veo31_fast_text_to_video":
+        result = await flows.veo31FastTextToVideoFlow(args);
+        break;
+
+      case "veo31_image_to_video":
+        result = await flows.veo31ImageToVideoFlow(args);
+        break;
+
       case "veo31_fast_image_to_video":
         result = await flows.veo31FastImageToVideoFlow(args);
         break;
+
       case "veo31_video_extension":
         result = await flows.veo31VideoToVideoFlow(args);
         break;
+
+      case "veo31_fast_video_extension":
+        result = await flows.veo31FastVideoToVideoFlow(args);
+        break;
+
+      case "video_with_voiceover":
+        result = await flows.videoWithVoiceoverFlow(args);
+        break;
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
