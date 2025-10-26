@@ -1,24 +1,40 @@
 {
-  "name": "agent-claude-genkit",
+  "name": "genkit-veo-mcp",
   "version": "1.0.0",
-  "description": "A TypeScript Genkit server with multiple AI flows",
+  "description": "MCP server exposing Genkit flows for Veo video generation, Imagen, and more",
   "main": "dist/index.js",
+  "bin": {
+    "genkit-veo-mcp": "dist/mcp-server.js"
+  },
   "scripts": {
     "dev": "tsx --watch src/index.ts",
     "genkit": "genkit start -- npx tsx --watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "mcp": "node dist/mcp-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
     "genkit",
+    "veo",
+    "video-generation",
+    "imagen",
     "ai",
     "typescript",
-    "google-ai"
+    "google-ai",
+    "claude"
   ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "devDependencies": {
     "@types/node": "^24.9.1",
     "tsx": "^4.20.6",
@@ -28,6 +44,7 @@
     "@genkit-ai/google-genai": "file:../../../../../tmp/genkit-source/js/plugins/google-genai/genkit-ai-google-genai-1.21.0.tgz",
     "@genkit-ai/mcp": "^1.21.0",
     "@google/genai": "^1.26.0",
+    "@modelcontextprotocol/sdk": "^1.20.2",
     "@types/fluent-ffmpeg": "^2.1.27",
     "data-urls": "^6.0.0",
     "dotenv": "^17.2.3",

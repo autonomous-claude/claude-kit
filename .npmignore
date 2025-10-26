@@ -1,0 +1,39 @@
+# Source files (users only need dist/)
+src/
+*.ts
+!*.d.ts
+tsconfig.json
+
+# Development
+node_modules/
+.env
+.env.*
+*.log
+
+# Test files
+test-input-files/
+test-*.ts
+*.test.ts
+*.spec.ts
+
+# Output (users generate their own)
+output/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts not needed
+*.tsbuildinfo
+
+# Documentation for development
+CLAUDE.md
+GENKIT.md
+MCP_DEPLOYMENT.md
+PUBLISHING.md
