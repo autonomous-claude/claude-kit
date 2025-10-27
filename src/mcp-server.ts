@@ -65,49 +65,49 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
 
-      // Text to Speech - COMMENTED OUT: Use ElevenLabs MCP server directly
-      // {
-      //   name: "text_to_speech",
-      //   description: "Convert text to speech using ElevenLabs",
-      //   inputSchema: {
-      //     type: "object",
-      //     properties: {
-      //       text: {
-      //         type: "string",
-      //         description: "Text to convert to speech",
-      //       },
-      //       voice_id: {
-      //         type: "string",
-      //         description: "Optional ElevenLabs voice ID",
-      //       },
-      //     },
-      //     required: ["text"],
-      //   },
-      // },
+      // Text to Speech
+      {
+        name: "text_to_speech",
+        description: "Convert text to speech using ElevenLabs. Returns path to generated audio file.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            text: {
+              type: "string",
+              description: "Text to convert to speech",
+            },
+            voice_id: {
+              type: "string",
+              description: "Optional ElevenLabs voice ID (defaults to SOYHLrjzK2X1ezoPC6cr)",
+            },
+          },
+          required: ["text"],
+        },
+      },
 
-      // Post Tweet - COMMENTED OUT: Use Twitter/X MCP server directly
-      // {
-      //   name: "post_tweet",
-      //   description: "Post a tweet to Twitter/X with optional image or video attachment",
-      //   inputSchema: {
-      //     type: "object",
-      //     properties: {
-      //       tweetContent: {
-      //         type: "string",
-      //         description: "The content of the tweet to post",
-      //       },
-      //       imagePath: {
-      //         type: "string",
-      //         description: "Optional path to image file to attach (supports .jpg, .png, .gif, .webp)",
-      //       },
-      //       videoPath: {
-      //         type: "string",
-      //         description: "Optional path to video file to attach (supports .mp4, .mov)",
-      //       },
-      //     },
-      //     required: ["tweetContent"],
-      //   },
-      // },
+      // Post Tweet
+      {
+        name: "post_tweet",
+        description: "Post a tweet to Twitter/X with optional image or video attachment",
+        inputSchema: {
+          type: "object",
+          properties: {
+            tweetContent: {
+              type: "string",
+              description: "The content of the tweet to post",
+            },
+            imagePath: {
+              type: "string",
+              description: "Optional path to image file to attach (supports .jpg, .png, .gif, .webp)",
+            },
+            videoPath: {
+              type: "string",
+              description: "Optional path to video file to attach (supports .mp4, .mov)",
+            },
+          },
+          required: ["tweetContent"],
+        },
+      },
 
       // Veo 3.1 Text-to-Video (High Quality) - COMMENTED OUT: Using fast variant only
       // {
@@ -326,13 +326,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         result = await flows.combineImageAudioToVideoFlow(args);
         break;
 
-      // case "text_to_speech":
-      //   result = await flows.textToSpeechFlow(args);
-      //   break;
+      case "text_to_speech":
+        result = await flows.textToSpeechFlow(args);
+        break;
 
-      // case "post_tweet":
-      //   result = await flows.postTweetFlow(args);
-      //   break;
+      case "post_tweet":
+        result = await flows.postTweetFlow(args);
+        break;
 
       case "veo31_text_to_video":
         result = await flows.veo31TextToVideoFlow(args);
