@@ -6,6 +6,10 @@ import { mcpHost } from "../config/mcp";
 /**
  * Post Tweet Flow (using Twitter MCP)
  * Posts a tweet to Twitter/X
+ *
+ * NOTE: This flow uses LLM-mediated tool calls for simplicity, which may be less reliable
+ * than direct MCP tool calls. The response is a status message that may not contain the tweet URL.
+ * Consider using the Twitter/X MCP tools directly for more reliable results.
  */
 export function createPostTweetFlow(ai: any) {
   return ai.defineFlow(

@@ -7,6 +7,10 @@ import { DEFAULT_VOICE_ID } from "../utils/constants";
 /**
  * Text to Speech Flow (using ElevenLabs MCP)
  * Converts text to speech using ElevenLabs voices
+ *
+ * NOTE: This flow uses LLM-mediated tool calls for simplicity, which may be less reliable
+ * than direct MCP tool calls. The response is a status message, not a guaranteed file path.
+ * Consider using the ElevenLabs MCP tools directly for more reliable results.
  */
 export function createTextToSpeechFlow(ai: any) {
   return ai.defineFlow(

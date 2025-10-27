@@ -29,103 +29,103 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
-      // Image Generation
-      {
-        name: "generate_image",
-        description: "Generate images using Imagen 4",
-        inputSchema: {
-          type: "object",
-          properties: {
-            prompt: {
-              type: "string",
-              description: "A detailed description of the image to generate",
-            },
-          },
-          required: ["prompt"],
-        },
-      },
+      // Image Generation - COMMENTED OUT
+      // {
+      //   name: "generate_image",
+      //   description: "Generate images using Imagen 4. Returns local file path to the generated image.",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {
+      //       prompt: {
+      //         type: "string",
+      //         description: "A detailed description of the image to generate",
+      //       },
+      //     },
+      //     required: ["prompt"],
+      //   },
+      // },
 
-      // Text to Speech
-      {
-        name: "text_to_speech",
-        description: "Convert text to speech using ElevenLabs",
-        inputSchema: {
-          type: "object",
-          properties: {
-            text: {
-              type: "string",
-              description: "Text to convert to speech",
-            },
-            voice_id: {
-              type: "string",
-              description: "Optional ElevenLabs voice ID",
-            },
-          },
-          required: ["text"],
-        },
-      },
+      // Text to Speech - COMMENTED OUT: Use ElevenLabs MCP server directly
+      // {
+      //   name: "text_to_speech",
+      //   description: "Convert text to speech using ElevenLabs",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {
+      //       text: {
+      //         type: "string",
+      //         description: "Text to convert to speech",
+      //       },
+      //       voice_id: {
+      //         type: "string",
+      //         description: "Optional ElevenLabs voice ID",
+      //       },
+      //     },
+      //     required: ["text"],
+      //   },
+      // },
 
-      // Post Tweet
-      {
-        name: "post_tweet",
-        description: "Post a tweet to Twitter/X with optional image or video attachment",
-        inputSchema: {
-          type: "object",
-          properties: {
-            tweetContent: {
-              type: "string",
-              description: "The content of the tweet to post",
-            },
-            imagePath: {
-              type: "string",
-              description: "Optional path to image file to attach (supports .jpg, .png, .gif, .webp)",
-            },
-            videoPath: {
-              type: "string",
-              description: "Optional path to video file to attach (supports .mp4, .mov)",
-            },
-          },
-          required: ["tweetContent"],
-        },
-      },
+      // Post Tweet - COMMENTED OUT: Use Twitter/X MCP server directly
+      // {
+      //   name: "post_tweet",
+      //   description: "Post a tweet to Twitter/X with optional image or video attachment",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {
+      //       tweetContent: {
+      //         type: "string",
+      //         description: "The content of the tweet to post",
+      //       },
+      //       imagePath: {
+      //         type: "string",
+      //         description: "Optional path to image file to attach (supports .jpg, .png, .gif, .webp)",
+      //       },
+      //       videoPath: {
+      //         type: "string",
+      //         description: "Optional path to video file to attach (supports .mp4, .mov)",
+      //       },
+      //     },
+      //     required: ["tweetContent"],
+      //   },
+      // },
 
-      // Veo 3.1 Text-to-Video (High Quality)
-      {
-        name: "veo31_text_to_video",
-        description: "Generate high-quality video from text using Veo 3.1 (takes longer but better quality)",
-        inputSchema: {
-          type: "object",
-          properties: {
-            prompt: {
-              type: "string",
-              description: "Detailed description of the video to generate",
-            },
-            negativePrompt: {
-              type: "string",
-              description: "What to avoid in the video (optional)",
-            },
-            aspectRatio: {
-              type: "string",
-              enum: ["9:16", "16:9"],
-              description: "Video aspect ratio (default: 16:9)",
-            },
-            personGeneration: {
-              type: "string",
-              enum: ["dont_allow", "allow_adult", "allow_all"],
-              description: "Person generation policy (default: dont_allow)",
-            },
-            durationSeconds: {
-              type: "number",
-              description: "Duration in seconds (default: 8)",
-            },
-            enhancePrompt: {
-              type: "boolean",
-              description: "Auto-enhance the prompt (default: true)",
-            },
-          },
-          required: ["prompt"],
-        },
-      },
+      // Veo 3.1 Text-to-Video (High Quality) - COMMENTED OUT: Using fast variant only
+      // {
+      //   name: "veo31_text_to_video",
+      //   description: "Generate high-quality video from text using Veo 3.1 (takes longer but better quality)",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {
+      //       prompt: {
+      //         type: "string",
+      //         description: "Detailed description of the video to generate",
+      //       },
+      //       negativePrompt: {
+      //         type: "string",
+      //         description: "What to avoid in the video (optional)",
+      //       },
+      //       aspectRatio: {
+      //         type: "string",
+      //         enum: ["9:16", "16:9"],
+      //         description: "Video aspect ratio (default: 16:9)",
+      //       },
+      //       personGeneration: {
+      //         type: "string",
+      //         enum: ["dont_allow", "allow_adult", "allow_all"],
+      //         description: "Person generation policy (default: dont_allow)",
+      //       },
+      //       durationSeconds: {
+      //         type: "number",
+      //         description: "Duration in seconds (default: 8)",
+      //       },
+      //       enhancePrompt: {
+      //         type: "boolean",
+      //         description: "Auto-enhance the prompt (default: true)",
+      //       },
+      //     },
+      //     required: ["prompt"],
+      //   },
+      // },
 
       // Veo 3.1 Fast Text-to-Video
       {
@@ -153,39 +153,39 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
 
-      // Veo 3.1 Image-to-Video
-      {
-        name: "veo31_image_to_video",
-        description: "Animate a static image into video using Veo 3.1",
-        inputSchema: {
-          type: "object",
-          properties: {
-            imagePath: {
-              type: "string",
-              description: "Path to the input image file",
-            },
-            prompt: {
-              type: "string",
-              description: "Description of how the image should animate",
-            },
-            aspectRatio: {
-              type: "string",
-              enum: ["9:16", "16:9"],
-              description: "Video aspect ratio (default: 16:9)",
-            },
-            personGeneration: {
-              type: "string",
-              enum: ["dont_allow", "allow_adult", "allow_all"],
-              description: "Person generation policy (default: dont_allow)",
-            },
-            durationSeconds: {
-              type: "number",
-              description: "Duration in seconds (default: 8)",
-            },
-          },
-          required: ["imagePath", "prompt"],
-        },
-      },
+      // Veo 3.1 Image-to-Video - COMMENTED OUT: Using fast variant only
+      // {
+      //   name: "veo31_image_to_video",
+      //   description: "Animate a static image into video using Veo 3.1",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {
+      //       imagePath: {
+      //         type: "string",
+      //         description: "Path to the input image file",
+      //       },
+      //       prompt: {
+      //         type: "string",
+      //         description: "Description of how the image should animate",
+      //       },
+      //       aspectRatio: {
+      //         type: "string",
+      //         enum: ["9:16", "16:9"],
+      //         description: "Video aspect ratio (default: 16:9)",
+      //       },
+      //       personGeneration: {
+      //         type: "string",
+      //         enum: ["dont_allow", "allow_adult", "allow_all"],
+      //         description: "Person generation policy (default: dont_allow)",
+      //       },
+      //       durationSeconds: {
+      //         type: "number",
+      //         description: "Duration in seconds (default: 8)",
+      //       },
+      //     },
+      //     required: ["imagePath", "prompt"],
+      //   },
+      // },
 
       // Veo 3.1 Fast Image-to-Video
       {
@@ -217,35 +217,35 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
 
-      // Veo 3.1 Video Extension
-      {
-        name: "veo31_video_extension",
-        description: "Extend and continue an existing video using Veo 3.1",
-        inputSchema: {
-          type: "object",
-          properties: {
-            videoUrl: {
-              type: "string",
-              description: "Google API URL of the input video to extend",
-            },
-            prompt: {
-              type: "string",
-              description: "Description of how to continue/extend the video",
-            },
-            aspectRatio: {
-              type: "string",
-              enum: ["9:16", "16:9"],
-              description: "Video aspect ratio (default: 16:9)",
-            },
-            personGeneration: {
-              type: "string",
-              enum: ["dont_allow", "allow_adult", "allow_all"],
-              description: "Person generation policy (default: dont_allow)",
-            },
-          },
-          required: ["videoUrl", "prompt"],
-        },
-      },
+      // Veo 3.1 Video Extension - COMMENTED OUT: Using fast variant only
+      // {
+      //   name: "veo31_video_extension",
+      //   description: "Extend and continue an existing video using Veo 3.1",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {
+      //       videoUrl: {
+      //         type: "string",
+      //         description: "Google API URL of the input video to extend",
+      //       },
+      //       prompt: {
+      //         type: "string",
+      //         description: "Description of how to continue/extend the video",
+      //       },
+      //       aspectRatio: {
+      //         type: "string",
+      //         enum: ["9:16", "16:9"],
+      //         description: "Video aspect ratio (default: 16:9)",
+      //       },
+      //       personGeneration: {
+      //         type: "string",
+      //         enum: ["dont_allow", "allow_adult", "allow_all"],
+      //         description: "Person generation policy (default: dont_allow)",
+      //       },
+      //     },
+      //     required: ["videoUrl", "prompt"],
+      //   },
+      // },
 
       // Veo 3.1 Fast Video Extension
       {
@@ -276,30 +276,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["videoUrl", "prompt"],
         },
       },
-
-      // Complete Video with Voiceover Workflow
-      {
-        name: "video_with_voiceover",
-        description: "Complete workflow: Generate image + voiceover + combine into video (optionally post to X)",
-        inputSchema: {
-          type: "object",
-          properties: {
-            imagePrompt: {
-              type: "string",
-              description: "Description of the image to generate",
-            },
-            ttsScript: {
-              type: "string",
-              description: "Script for the voiceover",
-            },
-            postOnX: {
-              type: "boolean",
-              description: "Whether to post the video on Twitter/X (default: false)",
-            },
-          },
-          required: ["imagePrompt", "ttsScript"],
-        },
-      },
     ],
   };
 });
@@ -322,17 +298,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let result;
 
     switch (name) {
-      case "generate_image":
-        result = await flows.imageGenerationFlow(args.prompt as string);
-        break;
+      // case "generate_image":
+      //   result = await flows.imageGenerationFlow(args.prompt as string);
+      //   break;
 
-      case "text_to_speech":
-        result = await flows.textToSpeechFlow(args);
-        break;
+      // case "text_to_speech":
+      //   result = await flows.textToSpeechFlow(args);
+      //   break;
 
-      case "post_tweet":
-        result = await flows.postTweetFlow(args);
-        break;
+      // case "post_tweet":
+      //   result = await flows.postTweetFlow(args);
+      //   break;
 
       case "veo31_text_to_video":
         result = await flows.veo31TextToVideoFlow(args);
@@ -356,10 +332,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case "veo31_fast_video_extension":
         result = await flows.veo31FastVideoToVideoFlow(args);
-        break;
-
-      case "video_with_voiceover":
-        result = await flows.videoWithVoiceoverFlow(args);
         break;
 
       default:

@@ -1,10 +1,14 @@
 // src/flows/image.ts
 import { z } from "genkit";
 import { googleAI } from "@genkit-ai/google-genai";
+import * as path from "path";
+import { writeFile, ensureDir } from "../utils/file";
+import { OUTPUT_DIR } from "../utils/constants";
 
 /**
  * Image Generation Flow
  * Generates images using Google's Imagen 4 Ultra model
+ * Returns file paths instead of data URLs to avoid huge responses
  */
 export function createImageGenerationFlow(ai: any) {
   return ai.defineFlow(
@@ -16,7 +20,8 @@ export function createImageGenerationFlow(ai: any) {
           .describe("A detailed description of the image to generate"),
       }),
       outputSchema: z.object({
-        imageUrl: z.string().optional().describe("URL of the generated image"),
+        imagePath: z.string().optional().describe("Local file path to the generated image"),
+        success: z.boolean().describe("Whether the image was generated successfully"),
         prompt: z.string().describe("The prompt used to generate the image"),
       }),
     },
@@ -34,13 +39,45 @@ export function createImageGenerationFlow(ai: any) {
           },
         });
 
+        const imageUrl = response.media?.url;
+
+        if (!imageUrl) {
+          return {
+            imagePath: undefined,
+            success: false,
+            prompt: input.prompt,
+          };
+        }
+
+        // Ensure output directory exists
+        await ensureDir(OUTPUT_DIR);
+
+        // Save data URL to file (data URLs can be massive when JSON stringified)
+        const imagePath = path.join(OUTPUT_DIR, `image_${Date.now()}.jpg`);
+
+        let imageBuffer: Buffer;
+        if (imageUrl.startsWith("data:")) {
+          // Extract base64 data from data URL
+          const base64Data = imageUrl.split(",")[1];
+          imageBuffer = Buffer.from(base64Data, "base64");
+        } else {
+          // If it's a regular URL, fetch it
+          const response = await fetch(imageUrl);
+          const arrayBuffer = await response.arrayBuffer();
+          imageBuffer = Buffer.from(arrayBuffer);
+        }
+
+        await writeFile(imagePath, imageBuffer);
+
         return {
-          imageUrl: response.media?.url,
+          imagePath,
+          success: true,
           prompt: input.prompt,
         };
       } catch (error) {
         return {
-          imageUrl: undefined,
+          imagePath: undefined,
+          success: false,
           prompt: input.prompt,
         };
       }
