@@ -68,7 +68,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       // Text to Speech
       {
         name: "text_to_speech",
-        description: "Convert text to speech using ElevenLabs. Returns path to generated audio file.",
+        description: "Convert text to speech using ElevenLabs. Returns { audioPath, success, error }. Check audioPath for the file to use in combine_image_audio_to_video.",
         inputSchema: {
           type: "object",
           properties: {
@@ -88,7 +88,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       // Post Tweet
       {
         name: "post_tweet",
-        description: "Post a tweet to Twitter/X with optional image or video attachment",
+        description: "Post a tweet to Twitter/X with optional image or video attachment. Returns { success, tweetId, result, error }.",
         inputSchema: {
           type: "object",
           properties: {

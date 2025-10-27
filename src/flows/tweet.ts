@@ -6,10 +6,7 @@ import { mcpHost } from "../config/mcp";
 /**
  * Post Tweet Flow (using Twitter MCP)
  * Posts a tweet to Twitter/X
- *
- * NOTE: This flow uses LLM-mediated tool calls for simplicity, which may be less reliable
- * than direct MCP tool calls. The response is a status message that may not contain the tweet URL.
- * Consider using the Twitter/X MCP tools directly for more reliable results.
+ * Uses LLM with tools but extracts actual tool results for reliability
  */
 export function createPostTweetFlow(ai: any) {
   return ai.defineFlow(
@@ -25,27 +22,25 @@ export function createPostTweetFlow(ai: any) {
           .string()
           .optional()
           .describe("Path to video file to attach (supports .mp4, .mov)"),
-        improveWithAI: z
-          .boolean()
-          .optional()
-          .describe("Whether to improve the tweet with AI before posting"),
       }),
-      outputSchema: z.string().describe("Tweet status or URL"),
+      outputSchema: z.object({
+        success: z.boolean().describe("Whether the tweet was posted successfully"),
+        tweetId: z.string().optional().describe("ID of the posted tweet"),
+        result: z.string().optional().describe("Result message from Twitter"),
+        error: z.string().optional().describe("Error message if failed"),
+      }),
     },
-    async (input: { tweetContent: string; imagePath?: string; videoPath?: string; improveWithAI?: boolean }) => {
+    async (input: { tweetContent: string; imagePath?: string; videoPath?: string }) => {
       try {
-        let tweetText = input.tweetContent;
-
-        // Get Twitter tools from MCP
         const mcpTools = await mcpHost.getActiveTools(ai);
 
-        // Build prompt based on whether media is included
-        let prompt = `Use the Twitter tool to post this tweet: "${tweetText}"`;
+        // Build prompt with media if provided
+        let prompt = `Call the Twitter create_tweet tool with text: "${input.tweetContent.replace(/"/g, '\\"')}"`;
 
         if (input.videoPath) {
-          prompt = `Use the Twitter tool to post a tweet with this text: "${tweetText}" and attach the video file at path: ${input.videoPath}`;
+          prompt += ` and video_path: "${input.videoPath}"`;
         } else if (input.imagePath) {
-          prompt = `Use the Twitter tool to post a tweet with this text: "${tweetText}" and attach the image file at path: ${input.imagePath}`;
+          prompt += ` and image_path: "${input.imagePath}"`;
         }
 
         const response = await ai.generate({
@@ -54,9 +49,35 @@ export function createPostTweetFlow(ai: any) {
           tools: mcpTools,
         });
 
-        return response.text || "Tweet posted successfully";
+        // Extract actual tool result from toolCalls
+        if (response.toolCalls && response.toolCalls.length > 0) {
+          const toolCall = response.toolCalls[0];
+          const toolOutput = toolCall.output;
+
+          const resultText = typeof toolOutput === 'string' ? toolOutput : JSON.stringify(toolOutput);
+
+          return {
+            success: true,
+            tweetId: undefined, // Twitter MCP doesn't reliably return ID in structured format
+            result: resultText,
+            error: undefined,
+          };
+        }
+
+        return {
+          success: false,
+          tweetId: undefined,
+          result: undefined,
+          error: "No tool calls were made",
+        };
       } catch (error) {
-        return `Error: ${error instanceof Error ? error.message : "Failed to post tweet"}`;
+        console.error("Error in postTweetFlow:", error);
+        return {
+          success: false,
+          tweetId: undefined,
+          result: undefined,
+          error: error instanceof Error ? error.message : "Failed to post tweet",
+        };
       }
     },
   );
