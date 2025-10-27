@@ -6,6 +6,7 @@ import { initializeMcpConnections, closeMcpConnections } from "./config/mcp";
 import { createImageGenerationFlow } from "./flows/image";
 import { createTextToSpeechFlow } from "./flows/tts";
 import { createPostTweetFlow } from "./flows/tweet";
+import { createCombineImageAudioToVideoFlow } from "./flows/combine-video";
 import {
   createVeoVideoFlow,
   createVeo31TextToVideoFlow,
@@ -25,6 +26,7 @@ export const ai = genkit({
 export const imageGenerationFlow = createImageGenerationFlow(ai);
 export const textToSpeechFlow = createTextToSpeechFlow(ai);
 export const postTweetFlow = createPostTweetFlow(ai);
+export const combineImageAudioToVideoFlow = createCombineImageAudioToVideoFlow(ai);
 
 // Veo video generation flows (all variants)
 export const veoVideoFlow = createVeoVideoFlow(ai); // Default: Fast variant
@@ -57,5 +59,7 @@ console.log("    • veo31FastVideoToVideoFlow: Video Extension/Continuation");
 console.log("\n🔊 MCP-powered flows:");
 console.log("  - textToSpeechFlow: Convert text to speech using ElevenLabs");
 console.log("  - postTweetFlow: Post tweets to Twitter/X");
+console.log("\n🎬 Utility flows:");
+console.log("  - combineImageAudioToVideoFlow: Combine image + audio → video");
 console.log("\n💡 To start the Genkit Developer UI, run:");
 console.log("  npm run genkit");

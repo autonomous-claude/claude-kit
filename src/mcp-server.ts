@@ -29,21 +29,41 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
-      // Image Generation - COMMENTED OUT
-      // {
-      //   name: "generate_image",
-      //   description: "Generate images using Imagen 4. Returns local file path to the generated image.",
-      //   inputSchema: {
-      //     type: "object",
-      //     properties: {
-      //       prompt: {
-      //         type: "string",
-      //         description: "A detailed description of the image to generate",
-      //       },
-      //     },
-      //     required: ["prompt"],
-      //   },
-      // },
+      // Image Generation
+      {
+        name: "generate_image",
+        description: "Generate images using Imagen 4. Returns local file path to the generated image.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            prompt: {
+              type: "string",
+              description: "A detailed description of the image to generate",
+            },
+          },
+          required: ["prompt"],
+        },
+      },
+
+      // Combine Image and Audio to Video
+      {
+        name: "combine_image_audio_to_video",
+        description: "Combine a static image and audio file into a video. Simple ffmpeg operation with no LLM involvement.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            imagePath: {
+              type: "string",
+              description: "Absolute path to the image file",
+            },
+            audioPath: {
+              type: "string",
+              description: "Absolute path to the audio file (mp3, wav, etc.)",
+            },
+          },
+          required: ["imagePath", "audioPath"],
+        },
+      },
 
       // Text to Speech - COMMENTED OUT: Use ElevenLabs MCP server directly
       // {
@@ -298,9 +318,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let result;
 
     switch (name) {
-      // case "generate_image":
-      //   result = await flows.imageGenerationFlow(args.prompt as string);
-      //   break;
+      case "generate_image":
+        result = await flows.imageGenerationFlow(args);
+        break;
+
+      case "combine_image_audio_to_video":
+        result = await flows.combineImageAudioToVideoFlow(args);
+        break;
 
       // case "text_to_speech":
       //   result = await flows.textToSpeechFlow(args);
