@@ -184,49 +184,87 @@ This project uses Model Context Protocol (MCP) servers:
 
 ### x402 Payment Protocol Integration
 
-This MCP server now supports **x402 payment protocol** for monetizing tool calls with Solana-based micropayments.
+This MCP server supports **x402 payment protocol** for monetizing tool calls with Solana-based micropayments.
+
+#### ⚠️ Important: Client Requirements
+
+**Standard MCP clients (Claude Desktop, Cursor, etc.) do NOT work with x402** because they use stdio transport, not HTTP.
+
+**What DOES work:**
+- ✅ Custom HTTP clients with Solana wallet integration
+- ✅ AI agent frameworks (Eliza, GOAT SDK, LangChain, etc.)
+- ✅ Web applications with wallet adapters
+- ✅ See [docs/X402_CLIENT_COMPATIBILITY.md](docs/X402_CLIENT_COMPATIBILITY.md) for full list
 
 #### Features
 - 💰 **0.01 USDC per tool call** (configurable)
 - ⚡ **Fast settlements** on Solana (400ms finality)
 - 🔒 **Secure verification** with on-chain validation
 - 🌐 **Mainnet & Devnet** support
+- 🌐 **HTTP API** for universal access
 
 #### Quick Setup
 
-1. **Enable payment requirement:**
+1. **Install dependencies:**
+```bash
+npm install
+```
+
+2. **Configure environment:**
 ```bash
 # In .env
 X402_REQUIRE_PAYMENT=true
 X402_TREASURY_WALLET=your_solana_wallet_address
 X402_NETWORK=devnet  # or mainnet-beta
+HTTP_MCP_PORT=3000   # Optional, defaults to 3000
 ```
 
-2. **Generate Solana wallet** (if needed):
+3. **Start HTTP MCP server:**
 ```bash
-solana-keygen new --outfile ~/.config/solana/devnet.json
-solana-keygen pubkey ~/.config/solana/devnet.json
+npm run http-server
+# Server starts on http://localhost:3000
 ```
 
-3. **Start server with payment verification:**
+#### HTTP API Endpoints
+
 ```bash
-npm run dev
-# Server will require X-PAYMENT header for all MCP tool calls
+# List available tools
+GET http://localhost:3000/tools
+
+# Get payment requirements (returns 402)
+POST http://localhost:3000/tools/:toolName/quote
+
+# Execute tool with payment
+POST http://localhost:3000/tools/:toolName/execute
+Headers: X-PAYMENT: <base64-payment-proof>
+Body: {"input": {...}}
 ```
 
-#### Usage in Code
+#### Example Client Usage
+
+See [`examples/x402-client.ts`](examples/x402-client.ts) for a complete TypeScript client implementation.
 
 ```typescript
-import { getPaymentWrappedTools, verifyToolPayment } from "./config/mcp";
+import X402McpClient from "./examples/x402-client";
+import { Keypair } from "@solana/web3.js";
 
-// Get tools with payment verification
-const mcpTools = await getPaymentWrappedTools(ai);
+const wallet = Keypair.fromSecretKey(/* your key */);
+const client = new X402McpClient(
+  "https://api.devnet.solana.com",
+  wallet,
+  "http://localhost:3000"
+);
 
-// Manual payment verification
-const isValid = await verifyToolPayment(paymentHeader, toolName);
+// Execute tool with automatic payment
+await client.executeToolWithPayment("mcp__ElevenLabs__text_to_speech", {
+  text: "Hello from x402!",
+  voice_id: "SOYHLrjzK2X1ezoPC6cr"
+});
 ```
 
-📖 **Full Documentation:** See [docs/X402_INTEGRATION.md](docs/X402_INTEGRATION.md) for complete setup, API reference, and production deployment guide.
+📖 **Documentation:**
+- [X402_INTEGRATION.md](docs/X402_INTEGRATION.md) - Server-side setup and configuration
+- [X402_CLIENT_COMPATIBILITY.md](docs/X402_CLIENT_COMPATIBILITY.md) - Client compatibility and examples
 
 ### Configuration
 

@@ -2,6 +2,18 @@
 
 This document explains the x402 payment protocol integration for the MCP (Model Context Protocol) server, enabling monetization of AI tool calls with Solana-based micropayments.
 
+## ⚠️ Important: Client Compatibility
+
+**Standard MCP clients (Claude Desktop, Cursor, etc.) do NOT work with x402 out of the box** because they use stdio transport, not HTTP.
+
+👉 **See [X402_CLIENT_COMPATIBILITY.md](./X402_CLIENT_COMPATIBILITY.md)** for:
+- Which clients work with x402
+- How to build custom clients
+- Example implementations (Node.js, Python, Web)
+- AI agent framework integrations
+
+This document covers the **server-side** implementation. For **client-side** usage, see the compatibility guide.
+
 ## Overview
 
 The x402 protocol activates the HTTP 402 "Payment Required" status code, enabling any API or service to require payment before serving content. This implementation uses Solana blockchain for fast, low-cost settlements (400ms finality, ~$0.00025 per transaction).
