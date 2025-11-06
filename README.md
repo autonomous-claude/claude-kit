@@ -182,9 +182,55 @@ This project uses Model Context Protocol (MCP) servers:
 - Search and user data
 - Custom server installation required
 
+### x402 Payment Protocol Integration
+
+This MCP server now supports **x402 payment protocol** for monetizing tool calls with Solana-based micropayments.
+
+#### Features
+- 💰 **0.01 USDC per tool call** (configurable)
+- ⚡ **Fast settlements** on Solana (400ms finality)
+- 🔒 **Secure verification** with on-chain validation
+- 🌐 **Mainnet & Devnet** support
+
+#### Quick Setup
+
+1. **Enable payment requirement:**
+```bash
+# In .env
+X402_REQUIRE_PAYMENT=true
+X402_TREASURY_WALLET=your_solana_wallet_address
+X402_NETWORK=devnet  # or mainnet-beta
+```
+
+2. **Generate Solana wallet** (if needed):
+```bash
+solana-keygen new --outfile ~/.config/solana/devnet.json
+solana-keygen pubkey ~/.config/solana/devnet.json
+```
+
+3. **Start server with payment verification:**
+```bash
+npm run dev
+# Server will require X-PAYMENT header for all MCP tool calls
+```
+
+#### Usage in Code
+
+```typescript
+import { getPaymentWrappedTools, verifyToolPayment } from "./config/mcp";
+
+// Get tools with payment verification
+const mcpTools = await getPaymentWrappedTools(ai);
+
+// Manual payment verification
+const isValid = await verifyToolPayment(paymentHeader, toolName);
+```
+
+📖 **Full Documentation:** See [docs/X402_INTEGRATION.md](docs/X402_INTEGRATION.md) for complete setup, API reference, and production deployment guide.
+
 ### Configuration
 
-MCP servers are configured in `src/index.ts`:
+MCP servers are configured in `src/config/mcp.ts`:
 
 ```typescript
 const mcpHost = createMcpHost({

@@ -2,7 +2,14 @@
 import "dotenv/config";
 import { genkit } from "genkit";
 import { googleAI } from "@genkit-ai/google-genai";
-import { initializeMcpConnections, closeMcpConnections } from "./config/mcp";
+import {
+  initializeMcpConnections,
+  closeMcpConnections,
+  getPaymentWrappedTools,
+  getPaymentRequirements,
+  verifyToolPayment,
+  x402Handler,
+} from "./config/mcp";
 import { createImageGenerationFlow } from "./flows/image";
 import { createTextToSpeechFlow } from "./flows/tts";
 import { createPostTweetFlow } from "./flows/tweet";
@@ -39,6 +46,14 @@ export const veo31FastVideoToVideoFlow = createVeo31FastVideoToVideoFlow(ai);
 
 // Export MCP connection functions
 export { initializeMcpConnections, closeMcpConnections };
+
+// Export x402 payment functions
+export {
+  getPaymentWrappedTools,
+  getPaymentRequirements,
+  verifyToolPayment,
+  x402Handler,
+};
 
 // Auto-initialize on module load
 initializeMcpConnections();
